@@ -64,12 +64,13 @@ class Movies extends Database {
 	 * @param string $search
 	 * @param string $sort
 	 * @param string $category
+	 * @param string $format
 	 * @param int $page
 	 * @param int $amount
 	 * @param boolean $array
 	 * @return the movies that match the search criteria
 	 */
-	function search($search, $sort = "name", $category = "", $page = 0, $amount = 0, $array = false, $searchColumns = array()) {
+	function search($search, $sort = "name", $category = "", $format = "", $page = 0, $amount = 0, $array = false, $searchColumns = array()) {
 		// Words
 		$words = preg_split("/\s+/", $search);
 		
@@ -107,6 +108,9 @@ class Movies extends Database {
 		}
 		if($category != "") {
 			$query .= " AND `genres` LIKE ?"; $bindings[] = '%'.$category.'%';
+		}
+		if($format != "") {
+			$query .= " AND `format` LIKE ?"; $bindings[] = '%'.$format.'%';
 		}
 		if($sort != "") {
 			$query .= " ORDER BY ".$sort.", `name`";

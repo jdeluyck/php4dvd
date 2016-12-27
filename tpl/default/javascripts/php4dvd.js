@@ -48,13 +48,13 @@ function search() {
 		}
 		
 		// Format
-		var f = $("#movieformat").val();
+		var f = $("#format").val();
 		if(f) {
 			url += "&f=" + encodeURIComponent(s);
-			location += "movieformat/" + encodeURIComponent(f) + "/";
-			Cookies.set("movieformat", f, { expires: 14 });
+			location += "format/" + encodeURIComponent(f) + "/";
+			Cookies.set("format", f, { expires: 14 });
 		} else {
-			Cookies.remove("movieformat");
+			Cookies.remove("format");
 		}
 		
 		// Layout
