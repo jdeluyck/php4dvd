@@ -68,6 +68,7 @@ define("loaned asc",								"uitgeleend (oud-nieuw)");
 define("loaned desc",								"uitgeleend (nieuw-oud)");
 define("ALL", 										"Alle");
 define("RESULTS_PER_PAGE",							"resultaten per pagina");
+define("FORMAT",									"Formaat");
 // Results
 define("NO_RESULTS_FOUND",							"Er zijn geen films gevonden.");
 define("NO_COVER",									"Geen afbeelding");

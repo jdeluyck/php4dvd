@@ -68,6 +68,7 @@ define("loaned asc",								"loaned out (old-new)");
 define("loaned desc",								"loaned out (new-old)");
 define("ALL", 										"All");
 define("RESULTS_PER_PAGE",							"results per page");
+define("FORMAT",									"Format");
 // Results
 define("NO_RESULTS_FOUND",							"No movies where found.");
 define("NO_COVER",									"No cover");

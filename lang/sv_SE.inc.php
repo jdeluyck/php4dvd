@@ -68,6 +68,7 @@ define("loaned asc",								"utlåande (gamla-nya)");
 define("loaned desc",								"utlåande (nya-gamla)");
 define("ALL", 										"Alla");
 define("RESULTS_PER_PAGE",							"resultat per sida");
+define("FORMAT",									"Format");
 // Results
 define("NO_RESULTS_FOUND",							"Inga filmer hittades.");
 define("NO_COVER",									"Inget omslag");

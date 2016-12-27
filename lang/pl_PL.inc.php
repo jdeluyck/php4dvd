@@ -68,6 +68,7 @@ define("loaned asc",								"Najpierw niewypożyczone");
 define("loaned desc",								"Najpierw wypożyczone");
 define("ALL",										"Wszystkie");
 define("RESULTS_PER_PAGE",							"pozycji na stronie");
+define("FORMAT",									"Format");
 // Results
 define("NO_RESULTS_FOUND",							"Nie znaleziono pozycji");
 define("NO_COVER",									"Brak okładki");
