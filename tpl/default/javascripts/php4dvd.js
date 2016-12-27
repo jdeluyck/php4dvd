@@ -47,6 +47,16 @@ function search() {
 			Cookies.remove("sort");
 		}
 		
+		// Format
+		var f = $("#movieformat").val();
+		if(f) {
+			url += "&f=" + encodeURIComponent(s);
+			location += "movieformat/" + encodeURIComponent(f) + "/";
+			Cookies.set("movieformat", f, { expires: 14 });
+		} else {
+			Cookies.remove("movieformat");
+		}
+		
 		// Layout
 		var l = $("#l").val();
 		if(l) {

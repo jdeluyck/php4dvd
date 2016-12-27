@@ -9,6 +9,9 @@ $(document).ready(function() {
 	if(Cookies.get("sort")) {
 		$("#sort").val(Cookies.get("sort"));
 	}
+	if(Cookies.get("movieformat")) {
+		$("#movieformat").val(Cookies.get("movieformat"));
+	}
 	if(Cookies.get("layout")) {
 		$("#l").val(Cookies.get("layout"));
 	}
@@ -29,6 +32,9 @@ $(document).ready(function() {
 	}
 	if(typeof parameters["sort"] === 'string') {
 		$("#sort").val(parameters["sort"]);
+	}
+	if(typeof parameters["movieformat"] === 'string') {
+		$("#movieformat").val(parameters["movieformat"]);
 	}
 	if(typeof parameters["page"] === 'string') {
 		$("#p").val(parameters["page"]);

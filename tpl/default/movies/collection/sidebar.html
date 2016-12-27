@@ -33,7 +33,7 @@
 		<li class="header">{$smarty.const.FORMAT|htmlentities:3:'UTF-8'}</li>
 		<li>
 			<div class="nav-select-wrapper">
-			<select id="sort" onchange="search();">
+			<select id="movieformat" onchange="search();">
 				{section name=f loop=$movieformats}
 				<option value="{$movieformats[f]}">{myUcfirst(translate($movieformats[f]))|htmlentities:3:'UTF-8'}</option>
 				{/section}
