@@ -110,7 +110,7 @@ class Movies extends Database {
 			$query .= " AND `genres` LIKE ?"; $bindings[] = '%'.$category.'%';
 		}
 		if($format != "") {
-			$query .= " AND `format` = ?"; $bindings[] = $format;
+			$query .= " AND `format` LIKE ?"; $bindings[] = '%'.$format.'%';
 		}
 		if($sort != "") {
 			$query .= " ORDER BY ".$sort.", `name`";
