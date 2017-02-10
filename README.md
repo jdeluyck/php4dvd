@@ -26,13 +26,19 @@ Features
 Requirements
 =======
 
-- Apache 2+
+- Apache 2.2+
 - PHP 5.3.7+
 - GD2 library to be able to upload (and resize) covers
 - PDO library
   - PDO driver for MySQL/MariaDB
 - cURL
+
+Recommendations
+=======
+
 - YouTube Data API key
+  - Apache 2.4+
+  - PHP 5.5.0+
 
 Installation
 =======
@@ -100,6 +106,25 @@ Server Error', adjust the .htaccess file in the root of the site.
 Try to remove the Options line by placing a # at the beginning of the line.
 Otherwise remove the `<Files>` section. These settings might fail because of
 the permissions of your webserver.
+
+###SSL certificate problem: unable to get local issuer certificate
+####Windows
+1. [Download cacert.pem](https://curl.haxx.se/docs/caextract.html).  
+2. Store it somewhere on your server.  
+`C:\php\extras\ssl\cacert.pem`  
+3. Open your php.ini and add the following under `[curl]`.  
+`curl.cainfo = "C:\php\extras\ssl\cacert.pem"`  
+4. Restart your web server.
+
+####Linux
+I recommend that you update your local `ca-bundle.crt` or `ca-certificates.crt` file for your whole system.  
+There are different best practices depending on OS. Google is your best bet, for finding the safest way.  
+
+You can also use a local `cacert.pem` like in Windows.  
+```
+/etc/ssl/certs/cacert.pem  
+curl.cainfo = "/etc/ssl/certs/cacert.pem"
+```
     
 Templates
 =======
@@ -121,6 +146,29 @@ and came up with some extra features.
  
 Thanks to Izzy from [IzzySoft](http://projects.izzysoft.de/trac/imdbphp). He wrote the imdbphp class to be able to 
 search for movies at IMDb.com. Big shoutout to [Tom](https://github.com/tboothman/imdbphp) for continuing his work.
+
+###Libraries
+
+#### HTML/CSS/JavaScript
+  - [AdminLTE](https://almsaeedstudio.com/)
+    - [Bootstrap](http://getbootstrap.com/)
+	  - [jQuery](https://jquery.com/)
+	  - [HTML5 Shiv](https://github.com/aFarkas/html5shiv)
+	  - [Respond.js](https://github.com/scottjehl/Respond)
+	- [Font Awesome](http://fontawesome.io/)
+  - [Bootstrap 3 Typeahead](https://github.com/bassjobsen/Bootstrap-3-Typeahead)
+  - [JavaScript Cookie](https://github.com/js-cookie/js-cookie)
+  - [jQuery Validation Plugin](https://jqueryvalidation.org/)
+  - [Lazy Load Plugin for jQuery](https://www.appelsiini.net/projects/lazyload)
+  - [Magnific Popup](http://dimsemenov.com/plugins/magnific-popup/)
+  
+#### PHP
+  - [BulletProof](https://github.com/samayo/bulletproof)
+  - [imdbphp](https://github.com/tboothman/imdbphp)
+  - [password_compat](https://github.com/ircmaxell/password_compat)
+  - [random_compat](https://github.com/paragonie/random_compat)
+  - [RedBeanPHP](http://www.redbeanphp.com/)
+  - [Smarty](http://www.smarty.net/)
 
 License
 =======

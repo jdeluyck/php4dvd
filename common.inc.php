@@ -17,8 +17,8 @@ session_start();
 $loc = dirname(__FILE__) . "/";
 
 // Correct PHP version check
-if(phpversion() < '5.3.7') {
-	echo "<h1>Error</h1><p>php4dvd requires at least PHP 5.3.7. You are running PHP " . phpversion() . ". Please upgrade.</p>";
+if(PHP_VERSION_ID < 50307) {
+	echo "<h1>Error</h1><p>php4dvd requires at least PHP 5.3.7. You are running PHP " . PHP_VERSION . ". Please upgrade.</p>";
 	exit();
 }
 
@@ -48,6 +48,15 @@ if(file_exists($loc . "config/config.php")) {
 		if(isset($settings["template"]))
 			$settings["smarty"]["template"] = $settings["template"];
 	}
+}
+
+// Force the use of HTTPS
+if(
+	isset($settings["url"]["HTTPS"]) && $settings["url"]["HTTPS"] && 
+	(!isset($_SERVER['HTTPS']) || $_SERVER['HTTPS'] !== 'on')
+) {
+	header('Location: https://'. $_SERVER["HTTP_HOST"] . $_SERVER["REQUEST_URI"], true, 301);
+	exit();
 }
 
 // Include util functions

@@ -14,9 +14,11 @@ $settings["defaultlanguage"] = "en";
 
 /**
  * Change your language and timezone here if required.
+ * ISO 639-1 alpha-2: https://en.wikipedia.org/wiki/List_of_ISO_639-1_codes
+ * ISO 3166-1 alpha-2: https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2
  * Timezones: http://php.net/manual/en/timezones.php
  */
-setlocale(LC_ALL, $settings["defaultlanguage"].'.UTF8');
+setlocale(LC_ALL, 'en_US.UTF8');
 date_default_timezone_set('UTC');
 
 /**
@@ -41,6 +43,12 @@ $baseurl = preg_replace("/^\//", "", $baseurl);
 $baseurl = preg_replace("/^\\\\/", "", $baseurl);
 $baseurl = preg_replace("/install/i", "", $baseurl);
 $settings["url"]["base"] = $baseurl;
+
+/**
+ * Force the use of HTTPS.
+ * Please activate inside .htaccess if you can, php4dvd will load a little faster.
+ */
+$settings["url"]["HTTPS"] = false;
 
 /**
  * The database settings.
@@ -138,6 +146,7 @@ $settings["smarty"]["development"]		= $settings["development"];
 /**
  * Pretty URL
  * Rewrite /.?go=movie&id=1&name=name-of-movie into /movie/id/1/name/name-of-movie/
+ * You will need to change some settings inside .htaccess
  */
  
 $settings["pretty_url"] = false;

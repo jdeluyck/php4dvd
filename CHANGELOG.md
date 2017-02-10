@@ -1,4 +1,42 @@
-## 3.2
+## 3.2.2 (2017-01-31)
+### Added
+  - You can now add TV-Series (Seasons)
+
+### Changed
+  - Updated AdminLTE to 2.3.11
+  - Blu-ray are now the standard video format
+  - Add from IMDb now includes Direct-to-video
+  
+### Fixed
+  - setlocale uses ISO 639-1 and ISO 3166-1
+  - Wrong character encoding on table.auth
+  - Installer ran last database update too
+
+## 3.2.1 (2017-01-27)
+### Added
+  - Validation of photos (jpeg|jpg)
+  - "Remember me" on log in
+  
+### Changed
+  - Updated imdbphp to 5.0.3
+  - Updated BulletProof to 2.0.2
+  
+### Fixed
+  - Resize high-res image only when it's saved 
+  - Missing id tag on input/textarea
+  - Plots author mistaken for next plot
+    - Ignore author if longer then 75 chars
+  - Navigation no longer indented on moviecolletion (mobile)
+  - Check if Youtube API key is available
+  - Compability with PHP 5.3.7+. Youtube API requires PHP 5.5.0+
+  
+### Security
+  - Added rel="noreferrer noopener" on target="_blank" links
+    - https://html.spec.whatwg.org/multipage/semantics.html#link-type-noopener
+  - Remove version number after installation (visible for admin)
+  - No longer store password in Smarty $User (for real this time).
+
+## 3.2 (2017-01-16)
 ### Added
   - Added ability to change amount of cast shown
   - Downloading high resolution images from IMDb (enable in settings)
@@ -6,7 +44,7 @@
 ### Changed
   - Moved movie specific variables from common.inc into movie.inc
   - Renamed language names to match ISO 639-1 codes
-	WARNING! This will break your site. You must change defaultlanguage inside your config.php file.
+	- WARNING! This will break your site. You must change defaultlanguage inside your config.php file.
   - Removed myUcfirst() and fixed translation instead
 
 ### Fixed
