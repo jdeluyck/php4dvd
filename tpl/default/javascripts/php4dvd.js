@@ -50,7 +50,7 @@ function search() {
 		// Format
 		var f = $("#format").val();
 		if(f) {
-			url += "&f=" + encodeURIComponent(s);
+			url += "&f=" + encodeURIComponent(f);
 			location += "format/" + encodeURIComponent(f) + "/";
 			Cookies.set("format", f, { expires: 14 });
 		} else {
