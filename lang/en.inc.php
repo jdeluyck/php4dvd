@@ -68,12 +68,7 @@ define("added desc",								"Added (new-old)");
 define("loaned asc",								"Loaned out (old-new)");
 define("loaned desc",								"Loaned out (new-old)");
 define("ALL", 										"All");
-<<<<<<< HEAD:lang/en_US.inc.php
-define("RESULTS_PER_PAGE",							"results per page");
-define("FORMAT",									"Format");
-=======
 define("RESULTS_PER_PAGE",							"Results per page");
->>>>>>> upstream/master:lang/en.inc.php
 // Results
 define("NO_RESULTS_FOUND",							"No titles where found.");
 define("NO_COVER",									"No cover");

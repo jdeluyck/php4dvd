@@ -68,12 +68,7 @@ define("added desc",								"Toegevoegd (nieuw-oud)");
 define("loaned asc",								"Uitgeleend (oud-nieuw)");
 define("loaned desc",								"Uitgeleend (nieuw-oud)");
 define("ALL", 										"Alle");
-<<<<<<< HEAD:lang/nl_NL.inc.php
-define("RESULTS_PER_PAGE",							"resultaten per pagina");
-define("FORMAT",									"Formaat");
-=======
 define("RESULTS_PER_PAGE",							"Resultaten per pagina");
->>>>>>> upstream/master:lang/nl.inc.php
 // Results
 define("NO_RESULTS_FOUND",							"Geen titels gevonden.");
 define("NO_COVER",									"Geen afbeelding");

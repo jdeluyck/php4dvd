@@ -68,12 +68,7 @@ define("added desc",								"Inlagda (nya-gamla)");
 define("loaned asc",								"Utlåande (gamla-nya)");
 define("loaned desc",								"Utlåande (nya-gamla)");
 define("ALL", 										"Alla");
-<<<<<<< HEAD:lang/sv_SE.inc.php
-define("RESULTS_PER_PAGE",							"resultat per sida");
-define("FORMAT",									"Format");
-=======
 define("RESULTS_PER_PAGE",							"Resultat per sida");
->>>>>>> upstream/master:lang/sv.inc.php
 // Results
 define("NO_RESULTS_FOUND",							"Inga titlar hittades.");
 define("NO_COVER",									"Inget omslag");

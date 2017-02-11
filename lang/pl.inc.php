@@ -68,12 +68,7 @@ define("added desc",								"Dacie dodania (od najnowszych)");
 define("loaned asc",								"Najpierw niewypożyczone");
 define("loaned desc",								"Najpierw wypożyczone");
 define("ALL",										"Wszystkie");
-<<<<<<< HEAD:lang/pl_PL.inc.php
-define("RESULTS_PER_PAGE",							"pozycji na stronie");
-define("FORMAT",									"Format");
-=======
 define("RESULTS_PER_PAGE",							"Pozycji na stronie");
->>>>>>> upstream/master:lang/pl.inc.php
 // Results
 define("NO_RESULTS_FOUND",							"Nie znaleziono pozycji");
 define("NO_COVER",									"Brak okładki");
