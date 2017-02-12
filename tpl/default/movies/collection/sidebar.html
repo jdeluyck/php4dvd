@@ -34,6 +34,7 @@
 		<li>
 			<div class="nav-select-wrapper">
 			<select id="format" onchange="search();">
+				<option value="0">{$smarty.const.ALL|htmlentities:3:'UTF-8'}</option>
 				{section name=f loop=$movieformats}
 				<option value="{$movieformats[f]}">{translate($movieformats[f])|htmlentities:3:'UTF-8'}</option>
 				{/section}
