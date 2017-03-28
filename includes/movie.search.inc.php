@@ -52,9 +52,9 @@ if(($loggedin || $guestview) && isset($refreshMovieList)) {
 		$category = "";
 	
 	// Validate $format against movie formats ($movieformats)
-	if(!in_array($format,$movieformats))
+	if(!in_array($format,$movieformats,true))
 		$format = "";
-
+	
 	// Change what columns to get from the database (movie collection)
 	$columns = array();
 	if($templateName == 'poster')

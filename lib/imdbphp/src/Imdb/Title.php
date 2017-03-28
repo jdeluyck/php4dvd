@@ -185,7 +185,7 @@ class Title extends MdbBase {
       return $this->pageUrls[$pageName];
     }
 
-    if (preg_match('!^Episodes-(\d+)$!', $pageName, $match)) {
+    if (preg_match('!^Episodes-(-?\d+)$!', $pageName, $match)) {
       return '/episodes?season='.$match[1];
     }
 
@@ -225,29 +225,30 @@ class Title extends MdbBase {
       if (preg_match('!class="originalTitle">(.+?)<span!s', $this->page["Title"], $otitle)) {
         $this->original_title = trim($otitle[1]);
       }
-      if (empty($this->main_movietype)) $this->main_movietype = 'Movie';
       if ($this->main_year=="????") $this->main_year = "";
     }
   }
 
   /** Get movie type
    * @method movietype
-   * @return string movietype (TV Series, Movie, ...)
+   * @return string movietype (TV Series, Movie, TV Episode, TV Special, TV Movie, TV Mini-Series, Video Game, TV Short, Video)
    * @see IMDB page / (TitlePage)
    * @brief This is faster than movietypes() as it is retrieved already together with the title.
    *        If no movietype had been defined explicitly, it returns 'Movie' -- so this is always set.
    */
-  public function movietype() {
-    if ( empty($this->main_movietype) ) {
-      if ( empty($this->main_title) ) $this->title_year(); // in case title was not yet parsed; it might already contain the movietype
-      if ( !empty($this->main_movietype) ) return $this->main_movietype; // done already
-      $this->getPage("Title");
-      if ( preg_match('!<h1 class="header"[^>]*>.+</h1>\s*<div class="infobar">\s*([\w\s]+)!ims', $this->page["Title"],$match) ) {
-        $this->main_movietype = trim($match[1]);
+  public function movietype()
+  {
+    if (empty($this->main_movietype)) {
+      if (empty($this->main_title)) $this->title_year(); // Most types are shown in the <title> tag
+      if (!empty($this->main_movietype)) {
+        return $this->main_movietype;
       }
-      $this->debug_object($match);
+      // TV Special isn't shown in the page title but is mentioned next to the release date
+      if (preg_match('/title="See more release dates" >TV Special/', $this->getPage("Title"), $match)) {
+        $this->main_movietype = 'TV Special';
+      }
+      if (empty($this->main_movietype)) $this->main_movietype = 'Movie';
     }
-    if ( empty($this->main_movietype) ) $this->main_movietype = 'Movie';
     return $this->main_movietype;
   }
 
@@ -387,16 +388,17 @@ class Title extends MdbBase {
   }
 
   #----------------------------------------------------------[ Aspect Ratio ]---
-  /** Aspect Ratio of movie screen
-   * @method aspect_ratio
-   * @return string ratio
+  /**
+   * Aspect Ratio of movie screen
+   * @return string ratio e.g. "2.35 : 1" or "" if there is no aspect ratio on imdb
    * @see IMDB page / (TitlePage)
    */
   public function aspect_ratio() {
     if (empty($this->aspectratio)) {
-      $this->getPage("Title");
-      preg_match('!<h4 class="inline">Aspect Ratio:</h4>\s*(.*?)\s+</div>!ims',$this->page["Title"],$match);
-      $this->aspectratio = $match[1];
+      $page = $this->getPage("Title");
+      if (preg_match('!<h4 class="inline">Aspect Ratio:</h4>\s*(.*?)\s+</div>!ims', $page, $match)) {
+        $this->aspectratio = $match[1];
+      }
     }
     return $this->aspectratio;
   }
@@ -502,19 +504,16 @@ class Title extends MdbBase {
   }
 
  #-------------------------------------------------------[ Recommendations ]---
-  /** Get recommended movies (People who liked this...also liked)
-   * @method movie_recommendations
-   * @return array recommendations (array[title,imdbid,year])
+  /**
+   * Get recommended movies (People who liked this...also liked)
+   * @return array recommendations (array[imdbid,title,year])
    * @see IMDB page / (TitlePage)
    */
   public function movie_recommendations() {
     if (empty($this->movierecommendations)) {
-      $this->getPage("Title");
-      if ( $this->page["Title"] == "cannot open page" ) return $this->movierecommendations; // no such page
       $doc = new \DOMDocument();
-      @$doc->loadHTML($this->page["Title"]);
+      @$doc->loadHTML($this->getPage("Title"));
       $xp = new \DOMXPath($doc);
-      $posters = array();
       $cells = $xp->query("//div[@id=\"title_recs\"]/div[@class=\"rec_overviews\"]/div[@class=\"rec_overview\"]/div[@class=\"rec_details\"]");
       foreach ($cells as $cell) {
         preg_match('!tt(\d+)!',$cell->getElementsByTagName('a')->item(0)->getAttribute('href'),$ref);
@@ -1071,10 +1070,10 @@ class Title extends MdbBase {
   }
 
  #-------------------------------------------------------[ MPAA / PG / FSK ]---
-  /** Get the MPAA data (also known as PG or FSK)
-   * @method mpaa
-   * @return array mpaa (array[country]=rating)
-   * @see IMDB page / (TitlePage)
+  /**
+   * Get the MPAA rating / Parental Guidance / Age rating for this title by country
+   * @return array [country => rating]
+   * @see IMDB Parental Guidance page / (parentalguide)
    */
   public function mpaa() {
    if (empty($this->mpaas)) {
@@ -1150,16 +1149,15 @@ class Title extends MdbBase {
   }
 
  #----------------------------------------------[ Position in the "Top250" ]---
-  /** Find the position of a movie in the top 250 ranked movies
-   * @method top250
-   * @return int position a number between 1..250 if the movie is listed, 0 otherwise
+  /**
+   * Find the position of a movie or tv show in the top 250 ranked movies or tv shows
+   * @return int position a number between 1..250 if ranked, 0 otherwise
    * @author abe
    * @see http://projects.izzysoft.de/trac/imdbphp/ticket/117
    */
   public function top250() {
     if ($this->main_top250 == -1) {
-      $this->getPage("Title");
-      if (@preg_match('!<a href="[^"]*/chart/top.*>\s*Top Rated Movies #(\d+)\s*</a>!si',$this->page["Title"],$match)) {
+      if (@preg_match('!<a href="[^"]*/chart/top.*>\s*Top Rated (?:Movies|TV) #(\d+)\s*</a>!si', $this->getPage("Title"), $match)) {
         $this->main_top250 = (int)$match[1];
       } else {
         $this->main_top250 = 0;
@@ -1245,23 +1243,20 @@ class Title extends MdbBase {
 
  #=====================================================[ /fullcredits page ]===
  #-----------------------------------------------------[ Helper: TableRows ]---
-  /** Get rows for a given table on the page
-   * @method protected get_table_rows
+  /**
+   * Get rows for a given table on the page
    * @param string html
    * @param string table_start
-   * @return array|false rows (FALSE if table not found, array[0..n] of strings otherwise)
+   * @return string[] Contents of each row of the table
    * @see used by the methods director, cast, writing, producer, composer
    */
   protected function get_table_rows( $html, $table_start ) {
    if ($table_start=="Writing Credits" || $table_start=="Series Writing Credits") $row_s = strpos ( $html, ">".$table_start);
    else $row_s = strpos ( $html, ">".$table_start."&nbsp;<");
-   $row_e = $row_s;
-   if ( $row_s == 0 )  return FALSE;
+   if ( $row_s == 0 ) return array();
    $endtable = strpos($html, "</table>", $row_s);
    $block = substr($html,$row_s,$endtable - $row_s);
    if (preg_match_all('!<tr>(.+?)</tr>!ims',$block,$matches)) {
-     $mc = count($matches[1]);
-     /* for ($i=0;$i<$mc;++$i) if ( strncmp( trim($matches[1][$i]), "<td valign=",10) == 0 ) $rows[] = $matches[1][$i]; */
      $rows = $matches[1];
    }
    return $rows;
@@ -1310,31 +1305,37 @@ class Title extends MdbBase {
   }
 
  #-------------------------------------------------------------[ Directors ]---
-  /** Get the director(s) of the movie
-   * @method director
+  /**
+   * Get the director(s) of the movie
    * @return array director (array[0..n] of arrays[imdb,name,role])
    * @see IMDB page /fullcredits
    */
-  public function director() {
-   if (empty($this->credits_director)) {
-    $this->getPage("Credits");
-    if ( $this->page["Credits"] == "cannot open page" ) return array(); // no such page
-   }
-   $director_rows = $this->get_table_rows($this->page["Credits"], "Directed by");
-   if($director_rows==null) $director_rows = $this->get_table_rows($this->page["Credits"], "Series Directed by");
-   for ( $i = 0; $i < count ($director_rows); $i++){
-    $cels = $this->get_row_cels ($director_rows[$i]);
-    if (!isset ($cels[0])) return array();
-    $dir = array();
-    $dir["imdb"] = $this->get_imdbname($cels[0]);
-    $dir["name"] = trim(strip_tags($cels[0]));
-    if (isset($cels[2])) $role = trim(strip_tags($cels[2]));
-    else $role = "";
-    if ( $role == "") $dir["role"] = NULL;
-    else $dir["role"] = $role;
-    $this->credits_director[$i] = $dir;
-   }
-   return $this->credits_director;
+  public function director()
+  {
+    if (!empty($this->credits_director)) {
+      return $this->credits_director;
+    }
+    $directorRows = $this->get_table_rows($this->getPage('Credits'), "Directed by");
+    if (!$directorRows) {
+      $directorRows = $this->get_table_rows($this->getPage('Credits'), "Series Directed by");
+    }
+    foreach ($directorRows as $directorRow) {
+      $cells = $this->get_row_cels($directorRow);
+      if (isset($cells[0])) {
+        if (isset($cells[2])) {
+          $role = trim(strip_tags($cells[2]));
+        } else {
+          $role = null;
+        }
+
+        $this->credits_director[] = array(
+          'imdb' => $this->get_imdbname($cells[0]),
+          'name' => trim(strip_tags($cells[0])),
+          'role' => $role ?: null
+        );
+      }
+    }
+    return $this->credits_director;
   }
 
  #----------------------------------------------------------------[ Actors ]---
@@ -1500,34 +1501,44 @@ class Title extends MdbBase {
   }
 
  #-------------------------------------------------------------[ Producers ]---
-  /** Obtain the producer(s)
-   * @method producer
+  /**
+   * Obtain the producer(s)
    * @return array producer (array[0..n] of arrays[imdb,name,role])
+   * e.g.
+   * Array (
+   *  'imdb' => '0905152'
+   *  'name' => 'Lilly Wachowski'
+   *  'role' => 'executive producer' // Can be null if no role is given
+   * )
    * @see IMDB page /fullcredits
    */
-  public function producer() {
-    if (empty($this->credits_producer)) {
-      $page = $this->getPage("Credits");
-      if (empty($page)) {
-        return array(); // no such page
+  public function producer()
+  {
+    if (!empty($this->credits_producer)) {
+      return $this->credits_producer;
+    }
+    $producerRows = $this->get_table_rows($this->getPage("Credits"), "Produced by");
+    if (!$producerRows) {
+      $producerRows = $this->get_table_rows($this->getPage("Credits"), "Series Produced by");
+    }
+    foreach ($producerRows as $producerRow) {
+      $cells = $this->get_row_cels($producerRow);
+      if (count($cells) > 2) {
+        if (isset($cells[2])) {
+          $role = trim(strip_tags($cells[2]));
+          $role = preg_replace('/ \(as .+\)$/', '', $role);
+        } else {
+          $role = null;
+        }
+
+        $this->credits_producer[] = array(
+          'imdb' => $this->get_imdbname($cells[0]),
+          'name' => trim(strip_tags($cells[0])),
+          'role' => $role ?: null
+        );
       }
     }
-   $this->credits_producer = array();
-   $producer_rows = $this->get_table_rows($this->page["Credits"], "Produced by");
-   for ( $i = 0; $i < count ($producer_rows); $i++){
-    $cels = $this->get_row_cels ($producer_rows[$i]);
-    if ( count ( $cels) > 2){
-     $wrt = array();
-     $wrt["imdb"] = $this->get_imdbname($cels[0]);
-     $wrt["name"] = trim(strip_tags($cels[0]));
-     if (isset($cels[2])) $role = trim(strip_tags($cels[2]));
-     else $role = "";
-     if ( $role == "") $wrt["role"] = NULL;
-     else $wrt["role"] = $role;
-     $this->credits_producer[$i] = $wrt;
-    }
-   }
-   return $this->credits_producer;
+    return $this->credits_producer;
   }
 
  #-------------------------------------------------------------[ Composers ]---
@@ -1543,9 +1554,6 @@ class Title extends MdbBase {
     $composer_rows = $this->get_table_rows($this->getPage('Credits'), "Music by");
     if (!$composer_rows) {
       $composer_rows = $this->get_table_rows($this->getPage('Credits'), "Series Music by");
-    }
-    if (!$composer_rows) {
-      return array();
     }
     foreach ($composer_rows as $composer_row) {
       $composer = array();
@@ -1605,29 +1613,35 @@ class Title extends MdbBase {
       }
       $page = $this->getPage("Episodes");
       if (empty($page)) return $this->season_episodes; // no such page
-      if ( preg_match('!<select id="bySeason"(.*?)</select!ims',$this->page["Episodes"],$match) ) {
-        preg_match_all('!<option\s+(selected="selected" |)value="(\d+)">!i',$match[1],$matches);
+      if ( preg_match('!<select id="bySeason"(.*?)</select!ims',$page,$match) ) {
+        preg_match_all('!<option\s+(selected="selected" |)value="([^"]+)">!i',$match[1],$matches);
         for ($i=0;$i<count($matches[0]);++$i) {
           $s = $matches[2][$i];
-          $this->getPage("Episodes-$s");
-          if (empty($this->page["Episodes-$s"])) continue; // no such page
-          $preg = '!<div class="info" itemprop="episodes".+?>\s*<meta itemprop="episodeNumber" content="(?<episodeNumber>\d+)"/>\s*'
+          $page = $this->getPage("Episodes-$s");
+          if (empty($page)) continue; // no such page
+          $preg = '!<div class="info" itemprop="episodes".+?>\s*<meta itemprop="episodeNumber" content="(?<episodeNumber>-?\d+)"/>\s*'
                 . '<div class="airdate">\s*(?<airdate>.*?)\s*</div>\s*'
                 . '.+?\shref="/title/tt(?<imdbid>\d{7})/.+?"\s+title="(?<title>.+?)"\s+itemprop="name"'
                 . '.+?<div class="item_description" itemprop="description">(?<plot>.*?)</div>!ims';
-          preg_match_all($preg,$this->page["Episodes-$s"],$eps);
-          $ec = count($eps[0]);
-          for ($ep=0; $ep<$ec; ++$ep) {
-            $plot = preg_replace('#<a href="[^"]+"\s+>Add a Plot</a>#', '', trim($eps['plot'][$ep]));
+          preg_match_all($preg, $page, $eps, PREG_SET_ORDER);
+          foreach ($eps as $ep) {
+            $plot = preg_replace('#<a href="[^"]+"\s+>Add a Plot</a>#', '', trim($ep['plot']));
             $plot = preg_replace('#Know what this is about\?<br>\s*<a href="[^"]+"\s*> Be the first one to add a plot.\s*</a>#ims', '', $plot);
-            $this->season_episodes[$s][$eps['episodeNumber'][$ep]] = array(
-              'imdbid'  => $eps['imdbid'][$ep],
-              'title'   => trim($eps['title'][$ep]),
-              'airdate' => $eps['airdate'][$ep],
+
+            $episode = array(
+              'imdbid'  => $ep['imdbid'],
+              'title'   => trim($ep['title']),
+              'airdate' => $ep['airdate'],
               'plot'    => $plot,
               'season'  => $s,
-              'episode' => $eps['episodeNumber'][$ep]
+              'episode' => $ep['episodeNumber']
             );
+
+            if ($ep['episodeNumber'] == -1) {
+              $this->season_episodes[$s][] = $episode;
+            } else {
+              $this->season_episodes[$s][$ep['episodeNumber']] = $episode;
+            }
           }
         }
       }

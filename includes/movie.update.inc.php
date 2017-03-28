@@ -38,7 +38,7 @@ if(isset($_GET["imdbsearch"])) {
 			\Imdb\TitleSearch::TV_MOVIE
 		);
 	
-		// Check if any of these results are allready added to our database
+		// Check if any of these results are already added to our database
 		$temp = array();
 		foreach($imdbresults as $result) {
 			$result->known = false;
@@ -120,6 +120,14 @@ if(isset($_POST["movieid"])) {
 			header("Location: " . prettyUrl(array('go' => 'movie', 'id' => $movie->id, 'name' => $movie->name)));
 		exit();
 	}
+}
+
+// Update movie favourite status
+if(isset($movie) && isset($_GET["favourite"])) {
+	$movie->favourite = $_GET["favourite"] == 1 ? 1 : 0;
+	$moviedm->save($movie);
+	header("Location: " . prettyUrl(array('go' => 'movie', 'id' => $movie->id, 'name' => $movie->name)));
+	exit();
 }
 
 // Update movie seen status

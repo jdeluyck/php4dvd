@@ -22,6 +22,7 @@ class Movie {
 		$this->year = $this->htmldecode($imdbmovie->year());
 		$this->duration = $this->htmldecode($imdbmovie->runtime());
 		$this->rating = $this->htmldecode($imdbmovie->rating());
+		$this->favourite = isset($this->favourite) ? $this->favourite : false;
 		$this->own = isset($this->own) ? $this->own : true;
 		$this->seen = isset($this->seen) ? $this->seen : true;
 		$this->loaned = isset($this->loaned) ? $this->loaned : false;
@@ -203,7 +204,7 @@ class Movie {
 		      ->setMime(array('jpeg'))
 			  ->setLocation(rtrim($dir,'/'))
 			  ->setSize($settings["photo"]["min_upload_size"],$settings["photo"]["max_upload_size"])
-			  ->setDimension($settings["photo"]["max_width"], $settings["photo"]["max_height"]);
+			  ->setDimension($settings["photo"]["max_height"], $settings["photo"]["max_width"]); // Width, Height
 
 		if($image[$field]){
 			$upload = $image->upload(); 
@@ -218,8 +219,8 @@ class Movie {
 					$image->getMime(),
 					$image->getWidth(),
 					$image->getHeight(),
-					$settings["photo"]["tn_maxwidth"],
-					$settings["photo"]["tn_maxheight"],
+					$settings["photo"]["tn_maxheight"], // Width
+					$settings["photo"]["tn_maxwidth"], // Height
 					true,
 					false
 				);
@@ -227,7 +228,6 @@ class Movie {
 				// OK
 			}else{
 				return false;
-				// $image["error"]; 
 			}
 		}
 		return false;

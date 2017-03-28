@@ -37,6 +37,16 @@ function search() {
 			Cookies.remove("category");
 		}
 		
+		// Format
+		var f = $("#format").val();
+		if(f) {
+			url += "&f=" + encodeURIComponent(f);
+			location += "format/" + encodeURIComponent(f) + "/";
+			Cookies.set("format", f, { expires: 14 });
+		} else {
+			Cookies.remove("format");
+		}
+		
 		// Sort
 		var s = $("#sort").val();
 		if(s) {
@@ -76,7 +86,7 @@ function search() {
 			Cookies.set("page", 0);
 		}
 		
-		// Number of resutls
+		// Number of results
 		var n = $("#n").val();
 		if(n && n > 0) {
 			url += "&n=" + encodeURIComponent(n);
