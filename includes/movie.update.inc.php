@@ -67,6 +67,10 @@ if(isset($_POST["movieid"])) {
 	// Update movie
 	$movie = fillObject($movie, $_POST, array(), array('movieid', 'autoupdate', 'submit', 'addnew'));
 	
+	// NameOrder - Select which prefixes to ignore when sorting
+	$nameOrder = $settings["name_order"];
+	$movie->nameorder = trim(preg_replace('/^('.$nameOrder.')[[:space:]]/u','',$movie->name));
+	
 	// Save movie
 	$movie->id = $moviedm->save($movie);
 	
